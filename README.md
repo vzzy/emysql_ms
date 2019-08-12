@@ -5,6 +5,7 @@ An OTP application
 
 Build
 -----
+	不需要Key参数的，读写落在第一个sharding，方便锁死数据库位置。
 
 	create table test(
 		id bigint primary key,

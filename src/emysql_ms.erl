@@ -10,6 +10,13 @@
 -export([
 	start/0,
 	
+	get_client/1,	
+		
+	select/3,
+	update/3,
+	delete/3,
+	insert/3,
+	
 	get_client/2,	
 		
 	select/4,
@@ -20,8 +27,29 @@
 -define(RETRIES,3).
 -define(TIMEOUT,30*1000).
 
+get_client(Poolname)->
+	ems:get_client_write(Poolname).
 get_client(Poolname,Key)->
 	ems:get_client_write(Poolname,Key).
+
+select(Poolname,Query, Params) ->
+	case ems:get_client_read(Poolname) of
+		{ok,Client}->
+			query(Client, Query, Params);
+		R->
+			R
+	end.
+update(Poolname,Query, Params) ->
+	insert(Poolname,Query, Params).
+delete(Poolname,Query, Params) ->
+	insert(Poolname,Query, Params).
+insert(Poolname,Query, Params) ->
+	case ems:get_client_write(Poolname) of
+		{ok,Client}->
+			query(Client, Query, Params);
+		R->
+			R
+	end.
 
 select(Poolname,Key,Query, Params) ->
 	case ems:get_client_read(Poolname,Key) of
