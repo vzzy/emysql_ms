@@ -8,6 +8,7 @@
 %% API functions
 %% ====================================================================
 -export([
+	start_link/1,  
 	start/0,
 	
 	get_client/1,	
@@ -73,7 +74,14 @@ insert(Poolname,Key,Query, Params) ->
 query(Client, Query, Params)->
 	mysql:query(Client, Query, Params,?TIMEOUT).
 
-
+start_link(Options)->
+	case mysql:start_link(Options) of
+		{ok,Pid}->
+			query(Pid, "set names utf8mb4", []),
+			{ok,Pid};
+		Others->
+			Others
+	end.
 
 %% ====================================================================
 %% Internal functions
